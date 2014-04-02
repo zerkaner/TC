@@ -49,7 +49,7 @@ public class Coordinator {
     
     initMap ("map1.txt"); 
     new JGameViewer (gigaSpace);
-    for(int i = 0; i < 25; i ++) new Car (i,gigaSpace).start ();
+    for (int i = 0; i < 25; i ++) new Car (i,gigaSpace).start ();
     
   }
 
