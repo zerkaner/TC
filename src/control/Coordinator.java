@@ -21,6 +21,11 @@ import model.Roxel;
 import model.Roxel.DIRECTION;
 import view.JGameViewer;
 
+/**
+ * Startklasse für das Projekt
+ * @author Abdul-Wahed
+ *
+ */
 public class Coordinator {
 
   private GigaSpace gigaSpace;
