@@ -12,7 +12,7 @@ public class Roxel {
   private Position position;
   private boolean  occupied;
   private DIRECTION direction;  
-  
+  private AbstractCar car = new EmptyCar();
   
   public Roxel(){
 	  
@@ -23,7 +23,7 @@ public class Roxel {
 	this.occupied = false;
     direction = dir;
     
-    //System.out.println ("Roxel an "+position.x+"/"+position.y+" mit Direction "+direction);
+    System.out.println ("Roxel an "+position.x+"/"+position.y+" mit Direction "+direction);
   }
   
   public int getLength() {
@@ -67,10 +67,18 @@ public class Roxel {
 	  this.direction = direction;
   }
 
+  public AbstractCar getCar(){
+	  return car;
+  }
+  
+  public void setCar(AbstractCar car){
+	  this.car = car;
+  }
+  
 @Override
 public String toString() {
 	return "Roxel [length=" + length + ", position=" + position + ", occupied="
-			+ occupied + ", direction=" + direction + "]";
+			+ occupied + ", direction=" + direction + "]" + "Car: "+car.toString();
 }
 
   

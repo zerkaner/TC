@@ -81,7 +81,10 @@ public class JGameViewer extends JGEngine {
       //System.out.println("painting..."+roxel);
       // When the roxel is occupied, paint a red rectangle.
       if (roxel.isOccupied()) {
-        setColor (JGColor.red);
+    	  int r = roxel.getCar().getColorCodeR();
+    	  int g = roxel.getCar().getColorCodeG();
+    	  int b = roxel.getCar().getColorCodeB();
+        setColor (new JGColor(r, g, b));
         drawRect (xPos*tileSize + tileSize/2, yPos*tileSize + tileSize/2, 6, 6, true, true);         
       }
     }

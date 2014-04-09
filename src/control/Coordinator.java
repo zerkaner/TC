@@ -2,6 +2,10 @@ package control;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.security.SecureRandom;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.Admin;
@@ -54,7 +58,19 @@ public class Coordinator {
     
     initMap ("map1.txt"); 
     new JGameViewer (gigaSpace);
-    for (int i = 0; i < 250; i ++) new Car (i,gigaSpace).start ();
+    
+    ExecutorService pool = Executors.newCachedThreadPool();
+    
+    SecureRandom sr = new SecureRandom();
+    
+    for (int i = 0; i < 75; i ++){
+    	Car current = new Car(i+1, gigaSpace); 
+    	current.setMeterPerSecond(sr.nextInt(28)+10);
+    	current.setColorCodeR(sr.nextInt(256));
+    	current.setColorCodeG(sr.nextInt(256));
+    	current.setColorCodeB(sr.nextInt(256));
+    	pool.execute(current);
+    }
     
   }
 
@@ -78,9 +94,11 @@ public class Coordinator {
             case '→': direction = Roxel.DIRECTION.EAST;     break;
             case '←': direction = Roxel.DIRECTION.WEST;     break;
             case '+': direction = Roxel.DIRECTION.CROSSING; break;
+            case '#': direction = Roxel.DIRECTION.BLOCKED;  break;
             default : continue;
           } 
           gigaSpace.write (new Roxel (new Position(j, i), direction, 5));
+          
           nr_roxels ++;
         }        
       }  

@@ -1,5 +1,6 @@
 package model;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import model.Roxel.DIRECTION;
@@ -10,33 +11,30 @@ import org.openspaces.core.space.UrlSpaceConfigurer;
 
 import com.j_spaces.core.IJSpace;
 
-public class Car extends Thread {
+public class Car extends AbstractCar {
   
-	private Roxel lastRoxel = null;
+	//private Roxel lastRoxel = null;
 	private Roxel currentRoxel = null;
-	private Roxel nextRoxel = null;
+	//private Roxel nextRoxel = null;
 	private DIRECTION direction = null;
 	private ConfigTuple map = null;
-	private int speedMeterPerSecond = 14;
-  
+
 	private GigaSpace gigaSpace = null;
 	private String url = "/*/myGrid";
 	
-	private Integer id = -1;
+	
 	
 	public Car(){
 		
 	}
 	
 	public Car(Integer id, GigaSpace gs){
-		this.id = id;
+		super.setCarID(id);
 		gigaSpace = gs;
 	}
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		super.run();
 		
 		if(gigaSpace == null){
 			// connect to the space using its URL
@@ -54,7 +52,7 @@ public class Car extends Thread {
 		
 		while(true){
 			try {
-				System.out.println("Car #"+id+" on "+currentRoxel.toString()+" direction "+direction);
+				//System.out.println("Car #"+getCarID()+" on "+currentRoxel.toString()+" direction "+direction);
 				moveForward();
 			} catch (InterruptedException e) {
 				continue;
@@ -64,42 +62,55 @@ public class Car extends Thread {
 	}
   
 	private void moveForward() throws InterruptedException{
-		Thread.sleep((1000/speedMeterPerSecond)*currentRoxel.getLength());
+		
+		Thread.sleep((1000/getMeterPerSecond())*currentRoxel.getLength());
 	
-		Roxel template = null;
-		
-		int limitX = map.getXTiles();//(map.getBlocksX() * map.getRoxelPerBlock()) -1;
-		int limitY = map.getYTiles();//(map.getBlocksY() * map.getRoxelPerBlock()) -1;
-		
+		Position position = new Position();
+				
 		if(direction == DIRECTION.SOUTH){
+			
 			int y = currentRoxel.getPosition().y + 1;
-			if(y >= limitY){
+			if(y >= map.getYTiles()){
 				y = 0;
 			}
-			template = new Roxel(new Position(currentRoxel.getPosition().x,y), currentRoxel.getDirection(), currentRoxel.getLength());
+			
+			position.x = currentRoxel.getXPos();
+			position.y = y;
+			
 		}else if(direction == DIRECTION.EAST){
+			
 			int x = currentRoxel.getPosition().x + 1;
-			if(x >= limitX){
+			if(x >= map.getXTiles()){
 				x = 0;
 			}
-			template = new Roxel(new Position(x,currentRoxel.getPosition().y), currentRoxel.getDirection(), currentRoxel.getLength());
+			
+			position.x = x;
+			position.y = currentRoxel.getYPos();
+			
 		}
 		
-		enterRoxel(template.getPosition());
+		enterRoxel(position);
 	}
   
    
 	private void enterRoxel(Position p){
-		nextRoxel = gigaSpace.takeById(Roxel.class, p);
-				
+		Roxel nextRoxel = gigaSpace.takeById(Roxel.class, p);
+		
+		int waiting = 0;
+		
 		while(nextRoxel == null || nextRoxel.isOccupied()){
 			
 			if(nextRoxel != null){
 				gigaSpace.write(nextRoxel);
+				
+				if((++waiting % 5) == 0){
+					System.out.println("Car: "+getCarID()+" waiting "+waiting+" direction is "+direction
+							+" try to get to "+p+" occupied by "+nextRoxel.getCar().getCarID()+" current in "+currentRoxel.getPosition());
+				}
 			}
 			
 			try {
-				Thread.sleep(1000L);
+				Thread.sleep((1000/getMeterPerSecond()));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -111,65 +122,69 @@ public class Car extends Thread {
 			
 			direction = nextRoxel.getDirection();
 			
-			Random r = new Random();
 			if(direction == DIRECTION.CROSSING){
+				
+				SecureRandom r = new SecureRandom();
+				
 				if(r.nextBoolean()){
 					direction = DIRECTION.EAST;
 				}else{
 					direction = DIRECTION.SOUTH;
 				}
 			}
+			
+			setColorAccordingToDirection();
+			
 		}
 		
-		nextRoxel.setOccupied(true); 
+		nextRoxel.setOccupied(true);
+		nextRoxel.setCar(this);
 		gigaSpace.write(nextRoxel);
 		
 		//System.out.println("CONTROL: "+gigaSpace.readById(Roxel.class, nextRoxel.getPosition()));
 		
 		if(currentRoxel != null){
 			currentRoxel.setOccupied(false);
+			currentRoxel.setCar(new EmptyCar());
 			gigaSpace.write(currentRoxel);
 		}
 		
-		if(currentRoxel == null){
-			currentRoxel = nextRoxel;
-		}
-		
-		lastRoxel = currentRoxel;
 		currentRoxel = nextRoxel;
 	}
 	  
+	private void setColorAccordingToDirection() {
+		
+		if(direction == DIRECTION.EAST){
+			setColorCodeR(255);
+			setColorCodeG(0);
+			setColorCodeB(0);
+		}else if(direction == DIRECTION.SOUTH){
+			setColorCodeR(0);
+			setColorCodeG(255);
+			setColorCodeB(0);
+		}
+	}
+
 	private void enterInitialRoxel(){
 		int x = 0;
 		int y = 0;
 		
-		Random r = new Random();
+		SecureRandom r = new SecureRandom();
+		Roxel temp = null;
+		Position p = null;
 		
-		x = r.nextInt(map.getXTiles());
-		y = r.nextInt(map.getYTiles());
+		do{
 		
-		Position p = new Position(x,y);
+			x = r.nextInt(map.getXTiles());
+			y = r.nextInt(map.getYTiles());
 			
-		/*
-		if(r.nextBoolean()){
-			x = r.nextInt(map.getBlocksX());
-			x = x - (x%(map.getBlocksX()/2));
-			if(x < map.getBlocksX()/2){
-				x = map.getBlocksX()/2;
-			}
-			direction = DIRECTION.SOUTH;
-		}else{
-			y = r.nextInt(map.getBlocksY());
-			y = y - (y % (map.getBlocksY()/2));
-			if(y < map.getBlocksY()/2){
-				y = map.getBlocksY()/2;
-			}
-			direction = DIRECTION.EAST;
-		}*/
-		  
-		  //Roxel template = new Roxel(new Position(x, y), direction, map.getRoxelLength());
-		  
-		  enterRoxel(p);
+			p = new Position(x,y);
+			
+			temp = gigaSpace.readById(Roxel.class, p);
+			
+		}while(temp.getDirection() == DIRECTION.BLOCKED);
+		
+		enterRoxel(p);
 	  }
 	  
 }
