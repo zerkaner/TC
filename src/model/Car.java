@@ -54,7 +54,7 @@ public class Car extends Thread {
 		
 		while(true){
 			try {
-				//System.out.println("Car #"+id+" on "+currentRoxel.toString());
+				System.out.println("Car #"+id+" on "+currentRoxel.toString()+" direction "+direction);
 				moveForward();
 			} catch (InterruptedException e) {
 				continue;
@@ -68,8 +68,8 @@ public class Car extends Thread {
 	
 		Roxel template = null;
 		
-		int limitX = map.getBlocksX();//(map.getBlocksX() * map.getRoxelPerBlock()) -1;
-		int limitY = map.getBlocksY();//(map.getBlocksY() * map.getRoxelPerBlock()) -1;
+		int limitX = map.getXTiles();//(map.getBlocksX() * map.getRoxelPerBlock()) -1;
+		int limitY = map.getYTiles();//(map.getBlocksY() * map.getRoxelPerBlock()) -1;
 		
 		if(direction == DIRECTION.SOUTH){
 			int y = currentRoxel.getPosition().y + 1;
@@ -91,7 +91,7 @@ public class Car extends Thread {
    
 	private void enterRoxel(Position p){
 		nextRoxel = gigaSpace.takeById(Roxel.class, p);
-		
+				
 		while(nextRoxel == null || nextRoxel.isOccupied()){
 			
 			if(nextRoxel != null){
@@ -99,7 +99,7 @@ public class Car extends Thread {
 			}
 			
 			try {
-				Thread.sleep(500L);
+				Thread.sleep(1000L);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -145,8 +145,8 @@ public class Car extends Thread {
 		
 		Random r = new Random();
 		
-		x = r.nextInt(map.getBlocksX());
-		y = r.nextInt(map.getBlocksY());
+		x = r.nextInt(map.getXTiles());
+		y = r.nextInt(map.getYTiles());
 		
 		Position p = new Position(x,y);
 			
