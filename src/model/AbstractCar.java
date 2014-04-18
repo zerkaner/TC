@@ -1,6 +1,6 @@
 package model;
 
-public abstract class AbstractCar implements Runnable{
+public abstract class AbstractCar implements Runnable {
 
 	private Integer carID = -1;
 	private Integer meterPerSecond = 14;

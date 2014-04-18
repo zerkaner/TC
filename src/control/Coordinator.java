@@ -27,7 +27,7 @@ import view.JGameViewer;
 
 /**
  * Startklasse für das Projekt
- * @author Abdul-Wahed
+ * @author Abdul-Wahed (aber nur zu einem Teil ...)
  *
  */
 public class Coordinator {
@@ -59,16 +59,17 @@ public class Coordinator {
     initMap ("map1.txt"); 
     new JGameViewer (gigaSpace);
     
-    ExecutorService pool = Executors.newCachedThreadPool();
-    
+    ExecutorService pool = Executors.newCachedThreadPool();   
     SecureRandom sr = new SecureRandom();
     
-    for (int i = 0; i < 75; i ++){
-    	Car current = new Car(i+1, gigaSpace); 
-    	current.setMeterPerSecond(sr.nextInt(28)+10);
-    	current.setColorCodeR(sr.nextInt(256));
-    	current.setColorCodeG(sr.nextInt(256));
-    	current.setColorCodeB(sr.nextInt(256));
+    for (int i = 0; i < 75; i ++){   	
+      Car current = new Car(i+1, gigaSpace); 
+    	current.setMeterPerSecond (sr.nextInt (28)+10);
+    	current.setColorCodeR (sr.nextInt (256));
+    	current.setColorCodeG (sr.nextInt (256));
+    	current.setColorCodeB (sr.nextInt (256));   	
+    	//Thread thread = new Thread (current);
+    	//thread.start ();
     	pool.execute(current);
     }
     

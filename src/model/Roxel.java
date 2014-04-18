@@ -23,7 +23,7 @@ public class Roxel {
 	this.occupied = false;
     direction = dir;
     
-    System.out.println ("Roxel an "+position.x+"/"+position.y+" mit Direction "+direction);
+    //System.out.println ("Roxel an "+position.x+"/"+position.y+" mit Direction "+direction);
   }
   
   public int getLength() {
