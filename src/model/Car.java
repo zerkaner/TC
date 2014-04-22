@@ -32,9 +32,9 @@ public class Car extends AbstractCar {
     map = gigaSpace.read (new ConfigTuple ());
     currentRoxel = gigaSpace.take (new SQLQuery <Roxel> (Roxel.class, "occupied = false"));
     direction = currentRoxel.getDirection ();
-
+    
     // Wenn wir uns auf einer Kreuzung befinden, zufällig Ost- oder Südfahrtrichtung.
-    if (direction == DIRECTION.CROSSING) {
+    if (direction == DIRECTION.TODECIDE) {
       SecureRandom r = new SecureRandom ();
       if (r.nextBoolean ()) direction = DIRECTION.EAST;
       else                  direction = DIRECTION.SOUTH;
@@ -80,12 +80,14 @@ public class Car extends AbstractCar {
   /** Neues Roxel anfordern, als "belegt" setzen und voriges Roxel wieder freigeben.
    * @param position Ein Objekt der Zielposition, dient als ID für die Roxel-Anfrage. */
   private void enterRoxel (final Position position) {
-    Roxel targetRoxel = gigaSpace.takeById (Roxel.class, position, null, Long.MAX_VALUE);    
+    Roxel template = new Roxel();
+    template.setDirection(direction);//in respect to traffic light process
+    template.setPosition(position);
+	Roxel targetRoxel = gigaSpace.take(template, Long.MAX_VALUE);//gigaSpace.takeById (Roxel.class, position, null, Long.MAX_VALUE);    
     setRoxelState (targetRoxel, true);
     setRoxelState (currentRoxel, false);
     currentRoxel = targetRoxel;
   }
-
 
   
   /** Schreibt ein Roxel als "belegt" oder "frei" in den Tupel-Space zurück.

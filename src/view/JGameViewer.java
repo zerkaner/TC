@@ -61,7 +61,7 @@ public class JGameViewer extends JGEngine {
       switch (roxel.getDirection ()) {       
         case NORTH:  case SOUTH: setTile (xPos, yPos, "vrt");  break;
         case WEST:   case EAST:  setTile (xPos, yPos, "hor");  break;
-        case CROSSING:           setTile (xPos, yPos, "crs");  break;   
+        case TODECIDE:           setTile (xPos, yPos, "crs");  break;   
         default: break; 
       }
     }
@@ -79,7 +79,7 @@ public class JGameViewer extends JGEngine {
       int xPos = roxel.getXPos();
       int yPos = roxel.getYPos();
       //System.out.println("painting..."+roxel);
-      // When the roxel is occupied, paint a red rectangle.
+      // When the roxel is occupied, paint color of car.
       if (roxel.isOccupied()) {
     	  int r = roxel.getCar().getColorCodeR();
     	  int g = roxel.getCar().getColorCodeG();

@@ -2,6 +2,7 @@ package model;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
+import com.gigaspaces.annotation.pojo.SpaceRouting;
 
 @SpaceClass
 public class Roxel {
@@ -35,6 +36,7 @@ public class Roxel {
   }
 
   @SpaceId(autoGenerate = false)
+  @SpaceRouting
   public Position getPosition() {
 	  return position;
   }
