@@ -14,13 +14,10 @@ import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitAlreadyDeployedException;
 import org.openspaces.admin.pu.ProcessingUnitDeployment;
-import org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment;
-import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.SpaceDeployment;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.UrlSpaceConfigurer;
-import org.openspaces.core.util.MemoryUnit;
 import org.openspaces.events.polling.SimplePollingContainerConfigurer;
 import org.openspaces.events.polling.SimplePollingEventListenerContainer;
 
@@ -65,9 +62,9 @@ public class Coordinator {
     new JGameViewer (gigaSpace);
     
     // Launch several cars randomly positioned across the map.
-    ExecutorService pool = Executors.newCachedThreadPool();   
+    ExecutorService pool = Executors.newCachedThreadPool ();   
     SecureRandom sr = new SecureRandom();    
-    for (int i = 0; i < 25; i ++){   	
+    for (int i = 0; i < 20; i ++){   	
       Car current = new Car(i+1, gigaSpace); 
     	current.setMeterPerSecond (sr.nextInt (28)+10);
     	current.setColorCodeR (sr.nextInt (256));
@@ -103,9 +100,8 @@ public class Coordinator {
           }
           Roxel r = new Roxel (new Position(j, i), direction, 5);
           gigaSpace.write (r);
-          if(r.isCrossing()){
-        	  pool.execute(new TrafficLightPU(r.getPosition(), gigaSpace));
-          }
+          if (r.isCrossing ()) pool.execute (new TrafficLightPU (r.getPosition (), gigaSpace));
+          
           nr_roxels ++;
         }        
       }  
@@ -138,14 +134,14 @@ public class Coordinator {
     }      
   }
   
+
   
-  //TODO Muß noch gemacht werden!
   public void registerPollinglistener(){
     SimplePollingEventListenerContainer pollingEventListenerContainer = new SimplePollingContainerConfigurer(
              gigaSpace).eventListenerAnnotation(new EventListener())
              .pollingContainer();
          pollingEventListenerContainer.start();
-  }  
+  }
   
   
   

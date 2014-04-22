@@ -61,11 +61,6 @@ public class JGameViewer extends JGEngine {
       //TODO This is really retarded. The street map won't change. 
       //     One should track car objects instead and update their positions ...
       
-      if(roxel.isCrossing()){
-    	  setTile (xPos, yPos, "crs");
-    	  continue;
-      }
-      
       // Paint the roxel tile.
       switch (roxel.getDirection ()) {       
         
@@ -104,7 +99,7 @@ public class JGameViewer extends JGEngine {
     	  int g = roxel.getCar().getColorCodeG();
     	  int b = roxel.getCar().getColorCodeB();
         setColor (new JGColor(r, g, b));
-        drawRect (xPos*tileSize + tileSize/2, yPos*tileSize + tileSize/2, 6, 6, true, true);         
+        drawRect (xPos*tileSize + tileSize/2, yPos*tileSize + tileSize/2, 8, 8, true, true);         
       }
     }
   }

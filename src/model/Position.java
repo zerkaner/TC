@@ -42,6 +42,15 @@ public class Position implements Serializable{
 		return true;
 	}
 	
+	public Integer getX() {
+	  return x;
+	}
+	
+	 public Integer getY() {
+	    return y;
+	  }
+	
+	
 	public String toString(){
 		return "Position x "+x+" y "+y;
 	}

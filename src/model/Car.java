@@ -49,7 +49,6 @@ public class Car extends AbstractCar {
       catch (Exception e) {
         System.err.print ("[Car] Thread Exception: ");
         e.printStackTrace ();
-        //continue;
       }
     }
   }
@@ -81,11 +80,14 @@ public class Car extends AbstractCar {
   /** Neues Roxel anfordern, als "belegt" setzen und voriges Roxel wieder freigeben.
    * @param position Ein Objekt der Zielposition, dient als ID für die Roxel-Anfrage. */
   private void enterRoxel (final Position position) {
-    Roxel template = new Roxel();
-    template.setDirection(direction);//in respect to traffic light process
-    template.setPosition(position);
-	Roxel targetRoxel = gigaSpace.take(template, Long.MAX_VALUE);//gigaSpace.takeById (Roxel.class, position, null, Long.MAX_VALUE);    
-    setRoxelState (targetRoxel, true);
+    //Roxel template = new Roxel ();
+    //template.setDirection (direction);
+    //template.setPosition (position);	  
+    //Roxel targetRoxel = gigaSpace.take (template, Long.MAX_VALUE);
+	  //gigaSpace.takeById (Roxel.class, position, null, Long.MAX_VALUE);    
+    Roxel targetRoxel = gigaSpace.take (new SQLQuery <Roxel> (Roxel.class, 
+      "direction='"+direction+"' AND position.x='"+position.x+"' AND position.y='"+position.y+"'"), Long.MAX_VALUE);
+	  setRoxelState (targetRoxel, true);
     setRoxelState (currentRoxel, false);
     currentRoxel = targetRoxel;
   }
