@@ -27,7 +27,8 @@ public class TrafficLightPU {
     	    gigaSpace = new GigaSpaceConfigurer(configurer).create ();
     	}
     	
-    	crossing.setDirection(DIRECTION.EAST);
+    	//TODO
+    	//crossing.setDirection(DIRECTION.EAST);
     	
     	return crossing;
     }

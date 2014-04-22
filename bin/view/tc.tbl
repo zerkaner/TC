@@ -1,8 +1,7 @@
 
-
-emptytile	.	0	null	-
-
-
-t1		hor	1	R1.png		-
-t2		vrt	2	R2.png		-
-t3		crs	3	R3.png		-
+emptytile	.	0	null			-
+t1		hor		1	R1.png			-
+t2		vrt		2	R2.png			-
+t3		crs		3	R3.png			-
+t3e		c_e		4	R3_east.png		-
+t3s		c_s		5	R3_south.png	-

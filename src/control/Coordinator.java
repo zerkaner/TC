@@ -58,25 +58,15 @@ public class Coordinator {
     //gigaSpace = new GigaSpaceConfigurer(configurer).create ();   
     
     // Creates a local tuple space and connects to it.
-    //gigaSpace = new GigaSpaceConfigurer(new UrlSpaceConfigurer("/./"+name)).gigaSpace();
-    
-	createTupleSpace();
-	  
-	System.out.println ("Connected to tuple space \""+name+"\".");
+    gigaSpace = new GigaSpaceConfigurer(new UrlSpaceConfigurer("/./"+name)).gigaSpace();  
+    System.out.println ("Connected to tuple space \""+name+"\".");
     
     initMap ("map1.txt");
-    
-    deployTrafficLightPU();
-    
-    System.out.println("Traffic lights PU deployed...");
-    
     new JGameViewer (gigaSpace);
     
-    System.out.println("JGAME running...");
-    
+    // Launch several cars randomly positioned across the map.
     ExecutorService pool = Executors.newCachedThreadPool();   
-    SecureRandom sr = new SecureRandom();
-    
+    SecureRandom sr = new SecureRandom();    
     for (int i = 0; i < 25; i ++){   	
       Car current = new Car(i+1, gigaSpace); 
     	current.setMeterPerSecond (sr.nextInt (28)+10);
@@ -84,8 +74,7 @@ public class Coordinator {
     	current.setColorCodeG (sr.nextInt (256));
     	current.setColorCodeB (sr.nextInt (256));   	
     	pool.execute(current);
-    }
-    
+    }   
   }
 
 
@@ -108,11 +97,9 @@ public class Coordinator {
             case '→': direction = Roxel.DIRECTION.EAST;     break;
             case '←': direction = Roxel.DIRECTION.WEST;     break;
             case '+': direction = Roxel.DIRECTION.TODECIDE; break;
-            case '#': direction = Roxel.DIRECTION.BLOCKED;  break;
             default : continue;
           } 
-          gigaSpace.write (new Roxel (new Position(j, i), direction, 5));
-          
+          gigaSpace.write (new Roxel (new Position(j, i), direction, 5));         
           nr_roxels ++;
         }        
       }  
@@ -124,13 +111,8 @@ public class Coordinator {
       e.printStackTrace();
     } 
   }  
- 
-  public void registerPollinglistener(){
-	  SimplePollingEventListenerContainer pollingEventListenerContainer = new SimplePollingContainerConfigurer(
-		         gigaSpace).eventListenerAnnotation(new EventListener())
-		         .pollingContainer();
-		     pollingEventListenerContainer.start();
-  }
+  
+  
   
   /** This method deploys a 1,1 tuple space in memory.
    * @param name A name for the space. */
@@ -149,6 +131,17 @@ public class Coordinator {
       System.err.println ("Error creating \""+name+"\". Space already deployed.");
     }      
   }
+  
+  
+  //TODO Muß noch gemacht werden!
+  public void registerPollinglistener(){
+    SimplePollingEventListenerContainer pollingEventListenerContainer = new SimplePollingContainerConfigurer(
+             gigaSpace).eventListenerAnnotation(new EventListener())
+             .pollingContainer();
+         pollingEventListenerContainer.start();
+  }  
+  
+  
   
   private void deployTrafficLightPU(){
 	// Wait for the discovery of the managers and at least one agent

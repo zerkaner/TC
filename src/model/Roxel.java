@@ -12,19 +12,19 @@ public class Roxel {
   private Integer  length = 5;
   private Position position;
   private boolean  occupied;
+  private boolean isCrossing;
   private DIRECTION direction;  
   private AbstractCar car = new EmptyCar();
   
   public Roxel(){
-	  
   }
+  
   
   public Roxel(Position position, DIRECTION dir, Integer length) {
     this.position = position;
-	this.occupied = false;
+    this.occupied = false;
+    if (dir == DIRECTION.TODECIDE) isCrossing = true;  // Roxel ggf. als Kreuzung markieren.
     direction = dir;
-    
-    //System.out.println ("Roxel an "+position.x+"/"+position.y+" mit Direction "+direction);
   }
   
   public int getLength() {
@@ -61,6 +61,14 @@ public class Roxel {
 	  this.occupied = occupied;
   }
 	
+  public boolean isCrossing() {
+    return isCrossing;
+  }
+  
+  public void setCrossing(boolean crossing) {
+    this.isCrossing = crossing;
+  }  
+  
   public DIRECTION getDirection() {
 	  return direction;
   }

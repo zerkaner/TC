@@ -1,21 +1,22 @@
 package view;
 
-import model.ConfigTuple;
-import model.Roxel;
-
+import com.j_spaces.core.client.SQLQuery;
 import org.openspaces.core.GigaSpace;
 
-import com.j_spaces.core.client.SQLQuery;
-
+import model.ConfigTuple;
+import model.Roxel;
 import view.jgame.JGColor;
 import view.jgame.platform.JGEngine;
 
+
+/** This Viewer uses the JGame libraries to visualize roxel occupation. */
 public class JGameViewer extends JGEngine {
 
   private static final long serialVersionUID = -5269227483585285966L;
   private GigaSpace gigaSpace; 
   private int xTiles, yTiles, tileSize;
   private Roxel [] roxels;
+  
   
   
   /** Creates a new view based on the JGame package. */
@@ -30,12 +31,14 @@ public class JGameViewer extends JGEngine {
   }
 
   
+  
   /** Executed between application and engine loading steps. */
   public void initCanvas () {
     setCanvasSettings (xTiles, yTiles, tileSize, tileSize, 
       JGColor.black, JGColor.white, null);  
   }
 
+  
   
   /** Post graphics engine initialization routine. */
   public void initGame () {
@@ -44,6 +47,7 @@ public class JGameViewer extends JGEngine {
     setBGColor (new JGColor (175, 175, 175));  
   }
 
+  
   
   /** This method is called whenever a new frame is required. */
   public void doFrame () {  
@@ -59,16 +63,26 @@ public class JGameViewer extends JGEngine {
       
       // Paint the roxel tile.
       switch (roxel.getDirection ()) {       
-        case NORTH:  case SOUTH: setTile (xPos, yPos, "vrt");  break;
-        case WEST:   case EAST:  setTile (xPos, yPos, "hor");  break;
-        case TODECIDE:           setTile (xPos, yPos, "crs");  break;   
+        
+        case NORTH:    setTile (xPos, yPos, "vrt");  break; 
+        case WEST:     setTile (xPos, yPos, "hor");  break;
+        case TODECIDE: setTile (xPos, yPos, "crs");  break;
+        
+        case EAST:
+          if (roxel.isCrossing ()) setTile (xPos, yPos, "c_e");
+          else                     setTile (xPos, yPos, "hor");  
+          break;
+          
+        case SOUTH: 
+          if (roxel.isCrossing ()) setTile (xPos, yPos, "c_s");
+          else                     setTile (xPos, yPos, "vrt");  
+          break;
+           
         default: break; 
       }
     }
-    
-    //TODO This does some random redness ;-)
-  // for (int i = 0; i < 3; i ++) roxels[random (0, roxels.length-1, 1)].setOccupied(true);
   }
+  
   
   
   /** Here, the painting for every new frame is done. */
@@ -78,7 +92,7 @@ public class JGameViewer extends JGEngine {
     for (Roxel roxel : roxels) {
       int xPos = roxel.getXPos();
       int yPos = roxel.getYPos();
-      //System.out.println("painting..."+roxel);
+
       // When the roxel is occupied, paint color of car.
       if (roxel.isOccupied()) {
     	  int r = roxel.getCar().getColorCodeR();
@@ -89,5 +103,4 @@ public class JGameViewer extends JGEngine {
       }
     }
   }
-
 }
