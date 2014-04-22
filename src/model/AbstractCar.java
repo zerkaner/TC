@@ -1,6 +1,11 @@
 package model;
 
-public abstract class AbstractCar implements Runnable {
+import java.io.Serializable;
+
+import com.gigaspaces.annotation.pojo.SpaceClass;
+
+@SpaceClass
+public abstract class AbstractCar implements Runnable, Serializable {
 
 	private Integer carID = -1;
 	private Integer meterPerSecond = 14;
