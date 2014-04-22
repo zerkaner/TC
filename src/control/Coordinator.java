@@ -13,6 +13,7 @@ import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitAlreadyDeployedException;
+import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.SpaceDeployment;
@@ -60,7 +61,6 @@ public class Coordinator {
     // Creates a local tuple space and connects to it.
     gigaSpace = new GigaSpaceConfigurer(new UrlSpaceConfigurer("/./"+name)).gigaSpace();  
     System.out.println ("Connected to tuple space \""+name+"\".");
-    
     initMap ("map1.txt");
     new JGameViewer (gigaSpace);
     
@@ -87,6 +87,8 @@ public class Coordinator {
       String input;
       int i, j = 0, nr_roxels = 0;
       
+      ExecutorService pool = Executors.newCachedThreadPool();   
+      
       // Iterates through the file: Param i: downwards, param j to the right.
       for (i = 0; (input = reader.readLine ()) != null; i ++) {
         for (j = 0; j < input.length (); j ++) { 
@@ -98,8 +100,12 @@ public class Coordinator {
             case '←': direction = Roxel.DIRECTION.WEST;     break;
             case '+': direction = Roxel.DIRECTION.TODECIDE; break;
             default : continue;
-          } 
-          gigaSpace.write (new Roxel (new Position(j, i), direction, 5));         
+          }
+          Roxel r = new Roxel (new Position(j, i), direction, 5);
+          gigaSpace.write (r);
+          if(r.isCrossing()){
+        	  pool.execute(new TrafficLightPU(r.getPosition(), gigaSpace));
+          }
           nr_roxels ++;
         }        
       }  
@@ -153,19 +159,7 @@ public class Coordinator {
 	  // Deploy the Elastic Processing Unit. 
 	  // Set the maximum memory and CPU capacity and initial capacity
 	  File puArchive = new File("./myPU.jar");
-	  ProcessingUnit pu = gsm.deploy(
-	          new ElasticStatefulProcessingUnitDeployment(puArchive)
-	             .memoryCapacityPerContainer(16,MemoryUnit.MEGABYTES)        
-	             .maxMemoryCapacity(512,MemoryUnit.MEGABYTES)
-	             .maxNumberOfCpuCores(32)     
-	             // uncomment when working with a single machine agent             
-	             .singleMachineDeployment() 
-	             // set the initial memory and CPU capacity
-	             .scale(new ManualCapacityScaleConfigurer()
-	                    .memoryCapacity(128,MemoryUnit.MEGABYTES)
-	                    .numberOfCpuCores(4)
-	                    .create())
-	  );
+	  ProcessingUnit pu = gsm.deploy(new ProcessingUnitDeployment(puArchive));
 
 	  // Wait until the deployment is complete.
 	  pu.waitForSpace().waitFor(pu.getTotalNumberOfInstances());

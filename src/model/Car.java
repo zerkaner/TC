@@ -8,10 +8,11 @@ import model.Roxel.DIRECTION;
 /** Klasse für ein Auto. */
 public class Car extends AbstractCar {
 
-  private Roxel currentRoxel;
-  private DIRECTION direction;
-  private ConfigTuple map;
-  private GigaSpace gigaSpace;
+	private static final long serialVersionUID = 8631524351652031594L;
+	private Roxel currentRoxel;
+	private DIRECTION direction;
+	private ConfigTuple map;
+	private GigaSpace gigaSpace;
 
   
   /** Leerer Standardkonstruktor für GigaSpaces. */
@@ -30,7 +31,7 @@ public class Car extends AbstractCar {
     
     // Initialisierung: Parameter, zufälliges Startroxel und Fahrtrichtung einlesen.
     map = gigaSpace.read (new ConfigTuple ());
-    currentRoxel = gigaSpace.take (new SQLQuery <Roxel> (Roxel.class, "occupied = false"));
+    currentRoxel = gigaSpace.take (new SQLQuery <Roxel> (Roxel.class, "occupied = false AND direction='EAST' or direction='SOUTH'"));
     direction = currentRoxel.getDirection ();
     
     // Wenn wir uns auf einer Kreuzung befinden, zufällig Ost- oder Südfahrtrichtung.

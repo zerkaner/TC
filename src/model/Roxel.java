@@ -1,13 +1,17 @@
 package model;
 
+import java.io.Serializable;
+
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 import com.gigaspaces.annotation.pojo.SpaceRouting;
 
 @SpaceClass
-public class Roxel {
+public class Roxel implements Serializable{
 
-  public static enum DIRECTION {NORTH, SOUTH, EAST, WEST, CROSSING, TODECIDE, BLOCKED};   
+	private static final long serialVersionUID = -1999871710653825142L;
+
+	public static enum DIRECTION {NORTH, SOUTH, EAST, WEST, CROSSING, TODECIDE, BLOCKED};   
   
   private Integer  length = 5;
   private Position position;
@@ -15,10 +19,11 @@ public class Roxel {
   private boolean isCrossing;
   private DIRECTION direction;  
   private AbstractCar car = new EmptyCar();
+
   
-  public Roxel(){
-  }
-  
+	public Roxel(){
+	}
+
   
   public Roxel(Position position, DIRECTION dir, Integer length) {
     this.position = position;
@@ -36,7 +41,6 @@ public class Roxel {
   }
 
   @SpaceId(autoGenerate = false)
-  @SpaceRouting
   public Position getPosition() {
 	  return position;
   }
