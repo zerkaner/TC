@@ -1,8 +1,11 @@
 package model;
 
 import com.j_spaces.core.client.SQLQuery;
+
 import org.openspaces.core.GigaSpace;
+
 import java.security.SecureRandom;
+
 import model.Roxel.DIRECTION;
 
 /** Klasse für ein Auto. */
@@ -58,7 +61,7 @@ public class Car extends AbstractCar {
   /** Erzeugt ein Positions-Objekt für das nächstbenötigte Roxel und versucht, dieses zu aquirieren. */
   private void moveForward () throws InterruptedException {
 
-    Thread.sleep ((1000 / getMeterPerSecond ()) * currentRoxel.getLength ());
+    Thread.sleep ((3000 / getMeterPerSecond ()) * currentRoxel.getLength ());
     Position position = new Position ();
 
     if (direction == DIRECTION.SOUTH) {
@@ -79,14 +82,10 @@ public class Car extends AbstractCar {
   
   /** Neues Roxel anfordern, als "belegt" setzen und voriges Roxel wieder freigeben.
    * @param position Ein Objekt der Zielposition, dient als ID für die Roxel-Anfrage. */
-  private void enterRoxel (final Position position) {
-    //Roxel template = new Roxel ();
-    //template.setDirection (direction);
-    //template.setPosition (position);	  
-    //Roxel targetRoxel = gigaSpace.take (template, Long.MAX_VALUE);
-	  //gigaSpace.takeById (Roxel.class, position, null, Long.MAX_VALUE);    
-    Roxel targetRoxel = gigaSpace.take (new SQLQuery <Roxel> (Roxel.class, 
-      "direction='"+direction+"' AND position.x='"+position.x+"' AND position.y='"+position.y+"'"), Long.MAX_VALUE);
+  private void enterRoxel (final Position position) throws InterruptedException {  
+    Roxel targetRoxel = gigaSpace.take (new SQLQuery <Roxel> (Roxel.class,
+       "direction='"+direction+"' AND position.x='"+position.x+
+       "' AND position.y='"+position.y+"'"), Long.MAX_VALUE);
 	  setRoxelState (targetRoxel, true);
     setRoxelState (currentRoxel, false);
     currentRoxel = targetRoxel;
