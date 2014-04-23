@@ -64,7 +64,7 @@ public class Coordinator {
     // Launch several cars randomly positioned across the map.
     ExecutorService pool = Executors.newCachedThreadPool ();   
     SecureRandom sr = new SecureRandom();    
-    for (int i = 0; i < 30; i ++){   	
+    for (int i = 0; i < 25; i ++){   	
       Car current = new Car(i+1, gigaSpace); 
     	current.setMeterPerSecond (sr.nextInt (28)+10);
     	current.setColorCodeR (sr.nextInt (256));

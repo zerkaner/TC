@@ -43,7 +43,7 @@ public class Car extends AbstractCar {
       if (r.nextBoolean ()) direction = DIRECTION.EAST;
       else                  direction = DIRECTION.SOUTH;
     }
-    setColorAccordingToDirection ();    // RGB-Farbe setzen: Ostrichtung=rot, Südrichtung=grün.
+    //setColorAccordingToDirection ();    // RGB-Farbe setzen: Ostrichtung=rot, Südrichtung=grün.
     setRoxelState (currentRoxel, true); // Roxel als belegt zurückschreiben.
     
     // Endlosschleife der Fortbewegung. Verzögerung (Sleep) erfolgt innerhalb!
@@ -84,9 +84,10 @@ public class Car extends AbstractCar {
    * @param position Ein Objekt der Zielposition, dient als ID für die Roxel-Anfrage. */
   private void enterRoxel (final Position position) throws InterruptedException {  
     Roxel targetRoxel = gigaSpace.take (new SQLQuery <Roxel> (Roxel.class,
-       "direction='"+direction+"' AND position.x='"+position.x+
+       "direction='"+direction+"' AND occupied = false AND position.x='"+position.x+
        "' AND position.y='"+position.y+"'"), Long.MAX_VALUE);
-	  setRoxelState (targetRoxel, true);
+	setRoxelState (targetRoxel, true);
+	Thread.sleep(100);
     setRoxelState (currentRoxel, false);
     currentRoxel = targetRoxel;
   }
